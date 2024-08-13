@@ -1,4 +1,6 @@
-import { MeshReflectorMaterial } from "@react-three/drei";
+import { Physics } from "@react-three/rapier";
+import { Players } from "./Players";
+import { Ground } from "./Ground";
 
 interface WorldProps {
   mobile: boolean;
@@ -7,17 +9,10 @@ interface WorldProps {
 export const World = (props: WorldProps) => {
   const { mobile } = props;
   return (
-    <>
+    <Physics debug>
       <ambientLight intensity={0.5} />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.5, -0]}>
-        <planeGeometry args={[100, 100]} />
-        <MeshReflectorMaterial
-          metalness={0.5}
-          roughness={0.5}
-          mirror={0.5}
-          color={"#a0a0a0"}
-        />
-      </mesh>
-    </>
+      <Ground />
+      <Players user={{ name: "placeholder", avatar: "red" }} />
+    </Physics>
   );
 };
