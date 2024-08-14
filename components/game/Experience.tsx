@@ -39,7 +39,7 @@ const Experience = () => {
   }, []);
   return (
     <Canvas
-      className="bg-gray-900"
+      className="absolute inset-0 w-full h-full bg-gray-900"
       onPointerDown={(e) => {
         if (e.pointerType === "mouse") {
           (e.target as HTMLCanvasElement).requestPointerLock();

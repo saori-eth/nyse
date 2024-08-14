@@ -1,9 +1,9 @@
 "use client";
 import dynamic from "next/dynamic";
-const Experience = dynamic(() => import("../components/game/Experience"), {
+const Experience = dynamic(() => import("@/components/game/Experience"), {
   ssr: false,
 });
-import { Header } from "@/components/ui/Header";
+import { Chat } from "@/components/ui/Chat";
 import { useEffect, useState } from "react";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { useProgress } from "@react-three/drei";
@@ -20,8 +20,7 @@ export default function Home() {
   }, [progress]);
   return (
     <>
-      {/* {!loaded && <LoadingScreen />}
-      {loaded && <Header />} */}
+      <Chat />
       <Middleware>
         <Experience />
       </Middleware>
