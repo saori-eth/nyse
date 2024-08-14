@@ -22,7 +22,7 @@ interface PlayerControllerProps {
   children: ReactNode;
   player: PlayerState;
 }
-const MIN_POLAR_ANGLE = -Math.PI / 2; // Minimum vertical angle (downwards)
+const MIN_POLAR_ANGLE = 0; // Minimum vertical angle (downwards)
 const MAX_POLAR_ANGLE = Math.PI / 2; // Maximum vertical angle (upwards)
 const CAM_SENSITIVITY = 200;
 const innerRot = new Quaternion();
@@ -125,7 +125,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
         <group position={[0, 1, 0]} ref={headRef}>
           <group ref={camRef} position={[0, 0.2, -1 * CAMERA_DISTANCE]} />
         </group>
-        <CapsuleCollider args={[0.55, 0.25]} mass={50} />
+        <CapsuleCollider args={[0.2, 0.25]} mass={50} />
         <group ref={playerRef}>
           <group ref={innerRef}>{props.children}</group>
         </group>

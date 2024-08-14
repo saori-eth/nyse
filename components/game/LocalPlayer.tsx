@@ -48,7 +48,7 @@ export const LocalPlayer = (props: LocalPlayerProps) => {
       </Billboard>
       <PlayerController player={player}>
         <mesh ref={boxRef}>
-          <boxGeometry args={[0.5, 1, 0.5]} />
+          <boxGeometry args={[0.5, 0.5, 0.5]} />
           <meshStandardMaterial color="red" />
         </mesh>
       </PlayerController>

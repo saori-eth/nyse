@@ -24,7 +24,6 @@ export const Players = (props: PlayersProps) => {
               id={player.id}
               position={player.getState("position")}
               rotation={player.getState("rotation")}
-              animation={player.getState("animation")}
             />
           </Suspense>
         )

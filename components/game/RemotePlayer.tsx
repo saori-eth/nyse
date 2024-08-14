@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Vector3, Group } from "three";
 import {
@@ -11,7 +11,6 @@ interface RemotePlayerProps {
   id: string;
   position: [number, number, number];
   rotation: [number, number, number, number];
-  animation: string;
 }
 
 export const RemotePlayer = (props: RemotePlayerProps) => {
@@ -45,10 +44,10 @@ export const RemotePlayer = (props: RemotePlayerProps) => {
       enabledRotations={[false, false, false]}
       position={[0, 0.75, 0]}
     >
-      <CapsuleCollider args={[0.55, 0.25]} mass={50} />
+      <CapsuleCollider args={[0.2, 0.25]} mass={50} />
       <group ref={playerRef}>
         <mesh>
-          <boxGeometry args={[0.5, 1, 0.5]} />
+          <boxGeometry args={[0.5, 0.5, 0.5]} />
           <meshStandardMaterial color="blue" />
         </mesh>
       </group>
