@@ -2,10 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { myPlayer, useMultiplayerState } from "playroomkit";
 
 export const Chat = () => {
-  const player = myPlayer();
-  const [messages, setMessages] = useMultiplayerState("messages", [
-    { id: 1, text: "Welcome to the game chat!", isUser: false },
-  ]);
+  const playerId = myPlayer()?.id;
+
+  const [messages, setMessages] = useMultiplayerState("messages", []);
+  useEffect(() => {
+    console.log("playerId", playerId);
+  }, [messages]);
   const [inputText, setInputText] = useState("");
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -19,10 +21,11 @@ export const Chat = () => {
   useEffect(scrollToBottom, [messages]);
 
   const handleSend = () => {
+    console.log("my player", myPlayer());
     if (inputText.trim() !== "") {
       setMessages([
         ...messages,
-        { id: messages.length + 1, text: inputText, isUser: true },
+        { id: messages.length + 1, text: inputText, playerId: playerId },
       ]);
       setInputText("");
     }
@@ -40,11 +43,20 @@ export const Chat = () => {
           .map((message: any) => (
             <div
               key={message.id}
-              className={`mb-3 ${message.isUser ? "text-right" : "text-left"}`}
+              className={`mb-3 ${
+                message.playerId === playerId ? "text-right" : "text-left"
+              }`}
             >
               <span
+                className={`text-xs text-gray-400 ${
+                  message.playerId === playerId ? "mr-2" : "ml-2"
+                }`}
+              >
+                {message.playerId.slice(0, 4)}
+              </span>
+              <span
                 className={`inline-block p-2 rounded-lg ${
-                  message.isUser
+                  message.playerId === playerId
                     ? "bg-blue-600 text-white"
                     : "bg-gray-700 text-gray-200"
                 } break-words max-w-[80%] overflow-wrap-anywhere hyphens-auto`}
