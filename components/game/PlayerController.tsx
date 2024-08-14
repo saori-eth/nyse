@@ -1,5 +1,5 @@
 import { useRef, type ReactNode, useEffect } from "react";
-import { useKeyboardControls } from "@react-three/drei";
+import { useKeyboardControls } from "@/hooks/useKeyboardControls";
 import { processMovement, processRotation } from "./controls";
 import { useFrame } from "@react-three/fiber";
 import type { Controls } from "@/types";
@@ -53,6 +53,12 @@ export const PlayerController = (props: PlayerControllerProps) => {
     const head = headRef.current;
     const inner = innerRef.current;
     if (!player || !physics || !inner || !cam || !head) return;
+
+    const isPointerLocked = document.pointerLockElement;
+    if (!isPointerLocked) {
+      physics.sleep();
+      return;
+    }
 
     // movement controls
     const controlState = get();

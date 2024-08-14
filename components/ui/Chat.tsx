@@ -71,8 +71,14 @@ export const Chat = () => {
           <input
             type="text"
             value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            onChange={(e) => {
+              e.stopPropagation();
+              setInputText(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+              e.key === "Enter" && handleSend();
+            }}
             className="flex-1 p-2 bg-gray-700 text-gray-100 rounded-l-md focus:outline-none placeholder-gray-400"
             placeholder="Type a message..."
           />
