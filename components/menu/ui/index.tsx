@@ -3,7 +3,7 @@ import { ColorPicker } from "./ColorSelector";
 import { NameInput } from "./NameInput";
 import { PlayButton } from "./PlayButton";
 
-const UI = () => {
+export const UI = () => {
   return (
     <>
       <Title />
@@ -27,5 +27,3 @@ const Title = () => {
     </div>
   );
 };
-
-export default UI;
