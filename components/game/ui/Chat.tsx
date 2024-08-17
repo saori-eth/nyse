@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { myPlayer, useMultiplayerState } from "playroomkit";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
-export const Chat = () => {
+const Chat = () => {
   return <ChatBox />;
 };
 
@@ -111,3 +111,5 @@ const ChatBox = () => {
     </div>
   );
 };
+
+export default Chat;

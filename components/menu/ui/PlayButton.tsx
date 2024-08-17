@@ -1,9 +1,6 @@
 "use client";
-
-import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useRouter } from "next/navigation";
 export const PlayButton = () => {
-  const [name] = useLocalStorage("name", "");
   const router = useRouter();
   const play = () => {
     router.push("/world");

@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
-import { UI } from "@/components/menu/ui";
-
+const UI = dynamic(() => import("@/components/menu/ui"), {
+  ssr: false,
+});
 const Experience = dynamic(() => import("@/components/menu/Experience"), {
   ssr: false,
 });

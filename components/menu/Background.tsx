@@ -1,3 +1,4 @@
+"use client";
 import { shaderMaterial } from "@react-three/drei";
 import { extend, useFrame } from "@react-three/fiber";
 import { Color, ShaderMaterial } from "three";
