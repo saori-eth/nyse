@@ -11,7 +11,7 @@ import { useZoom } from "@/context/ZoomProvider";
 import { World } from "./World";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
-const Experience = () => {
+export const Experience = () => {
   const { setMousePosition } = useMousePosition();
   const { setDeltaY } = useZoom();
   const [name] = useLocalStorage("name", "");
@@ -34,11 +34,18 @@ const Experience = () => {
   useEffect(() => {
     start();
   }, []);
-  const [mobile, setMobile] = useState(window.innerWidth < 768);
+  const [mobile, setMobile] = useState(false);
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    setMobile(window.innerWidth < 768);
     window.addEventListener("resize", () => {
       setMobile(window.innerWidth < 768);
     });
+    return () => {
+      window.removeEventListener("resize", () => {
+        setMobile(window.innerWidth < 768);
+      });
+    };
   }, []);
   return (
     <Canvas
@@ -68,5 +75,3 @@ const Experience = () => {
     </Canvas>
   );
 };
-
-export default Experience;

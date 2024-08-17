@@ -1,8 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
-const Experience = dynamic(() => import("@/components/game/Experience"), {
-  ssr: false,
-});
+import { Experience } from "@/components/game/Experience";
 const Chat = dynamic(() => import("@/components/game/ui/Chat"), {
   ssr: false,
 });
