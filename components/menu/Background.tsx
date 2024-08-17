@@ -38,9 +38,7 @@ const ColorShiftMaterial = shaderMaterial(
     uAlpha: 0.5,
     uMultiplier: 20,
     uTime: 0,
-    //@ts-expect-error
     uColorA: new Color("#000000"),
-    //@ts-expect-error
     uColorB: new Color("#000000"),
   },
   `

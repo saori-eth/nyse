@@ -49,7 +49,6 @@ export const RemotePlayer = (props: RemotePlayerProps) => {
       position={[0, 0.75, 0]}
     >
       <CapsuleCollider args={[0.2, 0.25]} mass={50} />
-      {/* @ts-expect-error */}
       <group ref={playerRef}>
         <Billboard
           follow={true}

@@ -1,3 +1,4 @@
+"use client";
 import { ColorPicker } from "./ColorSelector";
 import { NameInput } from "./NameInput";
 import { PlayButton } from "./PlayButton";
