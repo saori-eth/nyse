@@ -9,10 +9,13 @@ import { PlayerState, insertCoin, onPlayerJoin } from "playroomkit";
 import { useMousePosition } from "@/context/MouseProvider";
 import { useZoom } from "@/context/ZoomProvider";
 import { World } from "./World";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 const Experience = () => {
   const { setMousePosition } = useMousePosition();
   const { setDeltaY } = useZoom();
+  const [name] = useLocalStorage("name", "");
+  const [color] = useLocalStorage("color", "");
   const start = async () => {
     await insertCoin({
       maxPlayersPerRoom: 16,
@@ -21,8 +24,8 @@ const Experience = () => {
     });
     onPlayerJoin((player: PlayerState) => {
       console.log("Player joined", player);
-      player.setState("name", "placeholder");
-      player.setState("avatar", "red");
+      player.setState("name", name || "Anon");
+      player.setState("color", color || "red");
       player.onQuit(() => {
         console.log("Player quit", player);
       });

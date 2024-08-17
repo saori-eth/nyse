@@ -20,7 +20,9 @@ const Title = () => {
 
   return (
     <div className="absolute h-1/4 w-full flex justify-center items-center z-10 top-24">
-      <h1 className="text-6xl text-white">cutie.cat</h1>
+      <h1 className="text-6xl text-white font-bold tracking-widest text-shadow-lg z-10 pointer-events-none select-none text-center w-full">
+        cutie.cat
+      </h1>
     </div>
   );
 };

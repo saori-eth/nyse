@@ -6,16 +6,20 @@ import {
   CapsuleCollider,
   RapierRigidBody,
 } from "@react-three/rapier";
+import { Billboard, Text } from "@react-three/drei";
 
 interface RemotePlayerProps {
   id: string;
   position: [number, number, number];
   rotation: [number, number, number, number];
+  name: string;
+  color: string;
 }
 
 export const RemotePlayer = (props: RemotePlayerProps) => {
   const physicsRef = useRef<RapierRigidBody>(null);
   const playerRef = useRef<Group>(null);
+  const { name, color } = props;
   const translation = useRef<Vector3>(new Vector3(0, 0, 0));
 
   useFrame((_, delta) => {
@@ -45,10 +49,28 @@ export const RemotePlayer = (props: RemotePlayerProps) => {
       position={[0, 0.75, 0]}
     >
       <CapsuleCollider args={[0.2, 0.25]} mass={50} />
+      {/* @ts-expect-error */}
       <group ref={playerRef}>
+        <Billboard
+          follow={true}
+          lockX={false}
+          lockY={false}
+          lockZ={false}
+          position={[0, 0.35, 0]}
+        >
+          <Text
+            color="white"
+            anchorX="center"
+            anchorY="middle"
+            fontSize={0.1}
+            outlineColor="black"
+          >
+            {name}
+          </Text>
+        </Billboard>
         <mesh>
           <boxGeometry args={[0.5, 0.5, 0.5]} />
-          <meshStandardMaterial color="blue" />
+          <meshStandardMaterial color={color} />
         </mesh>
       </group>
     </RigidBody>

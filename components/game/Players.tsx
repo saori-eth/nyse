@@ -6,7 +6,7 @@ import { Suspense } from "react";
 interface PlayersProps {
   user: {
     name: string;
-    avatar: string;
+    color: string;
   };
 }
 
@@ -24,6 +24,8 @@ export const Players = (props: PlayersProps) => {
               id={player.id}
               position={player.getState("position")}
               rotation={player.getState("rotation")}
+              name={player.getState("name")}
+              color={player.getState("color")}
             />
           </Suspense>
         )

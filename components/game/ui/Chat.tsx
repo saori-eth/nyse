@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { myPlayer, useMultiplayerState } from "playroomkit";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 export const Chat = () => {
   return <ChatBox />;
@@ -7,7 +8,7 @@ export const Chat = () => {
 
 const ChatBox = () => {
   const playerId = myPlayer()?.id;
-
+  const [name] = useLocalStorage("name", "");
   const [messages, setMessages] = useMultiplayerState("messages", []);
   useEffect(() => {
     console.log("playerId", playerId);
@@ -36,7 +37,7 @@ const ChatBox = () => {
   };
 
   return (
-    <div className="absolute bottom-4 left-4 w-80 h-96 bg-gray-900 rounded-lg shadow-lg flex flex-col z-50 overflow-hidden border border-gray-700">
+    <div className="absolute bottom-4 left-4 w-80 h-96 bg-gray-900 bg-transparent bg-opacity-40 rounded-lg shadow-lg flex flex-col z-50 overflow-hidden border border-gray-700">
       <div
         ref={messagesContainerRef}
         className="flex-1 p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800 flex flex-col-reverse"
@@ -70,7 +71,7 @@ const ChatBox = () => {
             </div>
           ))}
       </div>
-      <div className="p-3 bg-gray-800">
+      <div className="p-3 bg-gray-800  bg-transparent bg-opacity-40">
         <div className="flex items-center">
           <input
             type="text"
@@ -83,7 +84,7 @@ const ChatBox = () => {
               e.stopPropagation();
               e.key === "Enter" && handleSend();
             }}
-            className="flex-1 p-2 bg-gray-700 text-gray-100 rounded-l-md focus:outline-none placeholder-gray-400"
+            className="flex-1 p-2 bg-gray-700 text-gray-100 rounded-l-md focus:outline-none placeholder-gray-400 bg-transparent bg-opacity-40"
             placeholder="Type a message..."
           />
           <button
@@ -91,7 +92,7 @@ const ChatBox = () => {
             className="bg-blue-600 text-white p-2 rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <svg
-              className="w-5 h-5"
+              className="w-6 h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
