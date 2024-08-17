@@ -5,9 +5,11 @@ import { Suspense, useEffect, useState } from "react";
 import { Background } from "./Background";
 import { Physics } from "@react-three/rapier";
 
-const Experience = () => {
-  const [mobile, setMobile] = useState(window.innerWidth < 768);
+export const Experience = () => {
+  const [mobile, setMobile] = useState(false);
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    setMobile(window.innerWidth < 768);
     window.addEventListener("resize", () => {
       setMobile(window.innerWidth < 768);
     });
@@ -27,5 +29,3 @@ const Experience = () => {
     </Canvas>
   );
 };
-
-export default Experience;
