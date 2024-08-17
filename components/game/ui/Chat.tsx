@@ -2,6 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { myPlayer, useMultiplayerState } from "playroomkit";
 
 export const Chat = () => {
+  return <ChatBox />;
+};
+
+const ChatBox = () => {
   const playerId = myPlayer()?.id;
 
   const [messages, setMessages] = useMultiplayerState("messages", []);
