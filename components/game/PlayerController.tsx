@@ -28,6 +28,7 @@ const CAM_SENSITIVITY = 200;
 const innerRot = new Quaternion();
 const v1 = new Vector3();
 const v2 = new Vector3();
+const v3 = new Vector3();
 const euler = new Euler(0, 0, 0, "YXZ");
 export const PlayerController = (props: PlayerControllerProps) => {
   const playerState = props.player;
@@ -55,10 +56,6 @@ export const PlayerController = (props: PlayerControllerProps) => {
     if (!player || !physics || !inner || !cam || !head) return;
 
     const isPointerLocked = document.pointerLockElement;
-    if (!isPointerLocked) {
-      physics.sleep();
-      return;
-    }
 
     // movement controls
     const controlState = get();
@@ -71,16 +68,6 @@ export const PlayerController = (props: PlayerControllerProps) => {
 
     const direction = processMovement(controlState, player.rotation.y);
     const currLinvel = physics.linvel();
-    physics.setLinvel(
-      new Vector3(direction.x, currLinvel.y, direction.z),
-      true
-    );
-
-    // inner is isolated from context which involves the camera. basically rotates the mesh. while allowing extra context of direction.
-    const playerRotation = processRotation(controlState);
-    if (playerRotation) {
-      inner.quaternion.slerp(playerRotation, 0.1);
-    }
 
     const physicsPosition = physics.translation();
     const rigidPosition = vec3(physicsPosition);
@@ -93,6 +80,20 @@ export const PlayerController = (props: PlayerControllerProps) => {
       );
     }
 
+    v1.setFromMatrixPosition(head.matrixWorld).y -= 0.2;
+    cam.position.set(0, -0.2, -distanceRef.current);
+    camera.position.lerp(v2.setFromMatrixPosition(cam.matrixWorld), 0.5);
+    camera.lookAt(v1);
+
+    if (!isPointerLocked) {
+      physics.sleep();
+      return;
+    }
+    // inner is isolated from context which involves the camera. basically rotates the mesh. while allowing extra context of direction.
+    const playerRotation = processRotation(controlState);
+    if (playerRotation) {
+      inner.quaternion.slerp(playerRotation, 0.1);
+    }
     const { movementX, movementY } = mousePositionRef.current;
     if (movementX || movementY) {
       euler.setFromQuaternion(head.quaternion);
@@ -105,15 +106,12 @@ export const PlayerController = (props: PlayerControllerProps) => {
       head.quaternion.setFromEuler(euler);
     }
 
-    v1.setFromMatrixPosition(head.matrixWorld).y -= 0.2;
-    cam.position.set(0, -0.2, -distanceRef.current);
-    camera.position.lerp(v2.setFromMatrixPosition(cam.matrixWorld), 0.5);
-    camera.lookAt(v1);
-
     // set player state
     const innerRotation = inner.getWorldQuaternion(innerRot);
     playerState.setState("rotation", innerRotation.toArray());
     playerState.setState("position", rigidPosition.toArray());
+    // dont move if no pointer lock
+    physics.setLinvel(v3.set(direction.x, currLinvel.y, direction.z), true);
 
     // reset global control refs
     setMousePosition({ movementX: 0, movementY: 0 });
@@ -126,7 +124,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
         ref={physicsRef}
         colliders={false}
         enabledRotations={[false, false, false]}
-        position={[0, 0.75, 0]}
+        position={[0, 0.5, 0]}
       >
         <group position={[0, 1, 0]} ref={headRef}>
           <group ref={camRef} position={[0, 0.2, -1 * CAMERA_DISTANCE]} />
