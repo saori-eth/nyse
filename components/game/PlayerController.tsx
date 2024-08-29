@@ -86,7 +86,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
     if (deltaY) {
       distanceRef.current = Math.max(
         MIN_DISTANCE,
-        Math.min(MAX_DISTANCE, distanceRef.current + deltaY * 0.05)
+        Math.min(MAX_DISTANCE, distanceRef.current + deltaY * 0.01)
       );
     }
 
@@ -152,6 +152,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
 
     // reset global control refs
     setMousePosition({ movementX: 0, movementY: 0 });
+    setDeltaY(0);
   });
   return (
     <>
