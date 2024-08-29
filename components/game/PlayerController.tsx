@@ -10,9 +10,11 @@ import {
   CapsuleCollider,
   type RapierRigidBody,
   RigidBody,
+  useRapier,
 } from "@react-three/rapier";
 import type { PlayerState } from "playroomkit";
 import { vec3 } from "@react-three/rapier";
+import { isGrounded } from "./controls/isGrounded";
 
 const CAMERA_DISTANCE = 10;
 const MIN_DISTANCE = 1; // Minimum camera distance
@@ -37,6 +39,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
   const { deltaYRef, setDeltaY } = useZoom();
   const physicsRef = useRef<RapierRigidBody>(null);
   const playerRef = useRef<Group>(null);
+  const rapierData = useRapier();
   const innerRef = useRef<any>();
   const distanceRef = useRef(CAMERA_DISTANCE);
   const camRef = useRef<Group>(null);
@@ -111,8 +114,20 @@ export const PlayerController = (props: PlayerControllerProps) => {
     playerState.setState("rotation", innerRotation.toArray());
     playerState.setState("position", rigidPosition.toArray());
     // dont move if no pointer lock
-    physics.setLinvel(v3.set(direction.x, currLinvel.y, direction.z), true);
-
+    let velY = currLinvel.y;
+    const { jump } = get();
+    if (jump) {
+      const newTranslation = physics.translation();
+      const grounded = isGrounded(rapierData, {
+        x: newTranslation.x,
+        y: newTranslation.y + 0.01,
+        z: newTranslation.z,
+      });
+      if (grounded) {
+        velY = 5;
+      }
+    }
+    physics.setLinvel(v3.set(direction.x, velY, direction.z), true);
     // reset global control refs
     setMousePosition({ movementX: 0, movementY: 0 });
     setDeltaY(0);
