@@ -38,23 +38,41 @@ const Bullet = ({
   position: Vector3;
   direction: Vector3;
 }) => {
+  const { actions } = useStore();
   const physicsRef = useRef<RapierRigidBody>(null);
+
   useEffect(() => {
     if (!physicsRef.current) return;
     physicsRef.current.setLinvel(direction.multiplyScalar(BULLET_SPEED), true);
   }, []);
   return (
-    <RigidBody
-      type="dynamic"
-      ref={physicsRef}
-      position={position}
-      colliders={false}
-      enabledRotations={[false, false, false]}
-    >
-      <mesh>
-        <sphereGeometry args={[0.1, 32, 32]} />
-        <meshStandardMaterial color="red" />
-      </mesh>
-    </RigidBody>
+    <group position={position}>
+      <RigidBody
+        ref={physicsRef}
+        gravityScale={0}
+        sensor
+        onIntersectionEnter={(e) => {
+          if (
+            //@ts-expect-error
+            e.other.rigidBody?.userData.type === "self" ||
+            //@ts-expect-error
+            e.other.rigidBody?.userData.type === "bullet"
+          )
+            return;
+          console.log("hit", e);
+          actions.removeBullet(id);
+        }}
+        userData={{
+          type: "bullet",
+          playerId: id.split("-")[0],
+          damage: 10,
+        }}
+      >
+        <mesh>
+          <sphereGeometry args={[0.1, 32, 32]} />
+          <meshStandardMaterial color="red" />
+        </mesh>
+      </RigidBody>
+    </group>
   );
 };

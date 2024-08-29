@@ -51,7 +51,10 @@ export const PlayerController = (props: PlayerControllerProps) => {
 
   useEffect(() => {
     // sleep initially so that the player doesn't fall through the floor
-    physicsRef.current?.sleep();
+    const { current: physics } = physicsRef;
+    if (!physics) return;
+    physics.sleep();
+    physics.userData = { type: "self" };
   }, []);
 
   useFrame(({ camera }) => {
@@ -136,7 +139,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
     if (mouseClicksRef.current.leftClick) {
       const now = Date.now();
       if (now - lastShot.current > 1000 / ROUNDS_PER_SECOND) {
-        const playerDirection = innerRef.current.getWorldDirection(v3);
+        const playerDirection = playerRef.current.getWorldDirection(v3);
         const bullet = {
           id: `${playerState.id}-${Date.now()}`,
           position: rigidPosition,
@@ -153,8 +156,8 @@ export const PlayerController = (props: PlayerControllerProps) => {
   return (
     <>
       <RigidBody
-        type="dynamic"
         ref={physicsRef}
+        type="dynamic"
         colliders={false}
         enabledRotations={[false, false, false]}
         position={[0, 0.5, 0]}
