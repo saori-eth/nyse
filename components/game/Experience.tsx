@@ -5,7 +5,7 @@ import {
   PerspectiveCamera,
 } from "@react-three/drei";
 import { Suspense, useEffect, useState } from "react";
-import { PlayerState, insertCoin, onPlayerJoin } from "playroomkit";
+import { PlayerState, insertCoin, me, onPlayerJoin } from "playroomkit";
 import { useMousePosition } from "@/context/MouseProvider";
 import { useZoom } from "@/context/ZoomProvider";
 import { World } from "./World";
@@ -23,17 +23,22 @@ export const Experience = () => {
       skipLobby: true,
     });
     onPlayerJoin((player: PlayerState) => {
+      const isMe = player.id === me().id;
       console.log("Player joined", player);
-      player.setState("name", name || "Anon");
-      player.setState("color", color || "red");
+      if (isMe) {
+        player.setState("name", name || "Anon");
+        player.setState("color", color || "red");
+      }
       player.onQuit(() => {
         console.log("Player quit", player);
       });
     });
   };
   useEffect(() => {
+    if (!name || !color) return;
+    console.log("Starting game", name, color);
     start();
-  }, []);
+  }, [name, color]);
   const [mobile, setMobile] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
