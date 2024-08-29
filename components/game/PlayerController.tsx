@@ -1,9 +1,9 @@
 import { useRef, type ReactNode, useEffect } from "react";
-import { useKeyboardControls } from "@/hooks/useKeyboardControls";
+import { useKeyboardControls } from "@react-three/drei";
 import { processMovement, processRotation } from "./controls";
 import { useFrame } from "@react-three/fiber";
 import type { Controls } from "@/types";
-import { useMousePosition } from "@/context/MouseProvider";
+import { useMouse } from "@/context/MouseProvider";
 import { useZoom } from "@/context/ZoomProvider";
 import { Euler, type Group, Quaternion, Vector3 } from "three";
 import {
@@ -15,6 +15,7 @@ import {
 import type { PlayerState } from "playroomkit";
 import { vec3 } from "@react-three/rapier";
 import { isGrounded } from "./controls/isGrounded";
+import { useStore } from "@/hooks/useStore";
 
 const CAMERA_DISTANCE = 10;
 const MIN_DISTANCE = 1; // Minimum camera distance
@@ -27,6 +28,7 @@ interface PlayerControllerProps {
 const MIN_POLAR_ANGLE = 0; // Minimum vertical angle (downwards)
 const MAX_POLAR_ANGLE = Math.PI / 2; // Maximum vertical angle (upwards)
 const CAM_SENSITIVITY = 200;
+const ROUNDS_PER_SECOND = 10;
 const innerRot = new Quaternion();
 const v1 = new Vector3();
 const v2 = new Vector3();
@@ -35,7 +37,7 @@ const euler = new Euler(0, 0, 0, "YXZ");
 export const PlayerController = (props: PlayerControllerProps) => {
   const playerState = props.player;
   const [, get] = useKeyboardControls<Controls>();
-  const { mousePositionRef, setMousePosition } = useMousePosition();
+  const { mousePositionRef, setMousePosition, mouseClicksRef } = useMouse();
   const { deltaYRef, setDeltaY } = useZoom();
   const physicsRef = useRef<RapierRigidBody>(null);
   const playerRef = useRef<Group>(null);
@@ -44,6 +46,8 @@ export const PlayerController = (props: PlayerControllerProps) => {
   const distanceRef = useRef(CAMERA_DISTANCE);
   const camRef = useRef<Group>(null);
   const headRef = useRef<Group>(null);
+  const lastShot = useRef(0);
+  const { actions } = useStore();
 
   useEffect(() => {
     // sleep initially so that the player doesn't fall through the floor
@@ -128,9 +132,23 @@ export const PlayerController = (props: PlayerControllerProps) => {
       }
     }
     physics.setLinvel(v3.set(direction.x, velY, direction.z), true);
+
+    if (mouseClicksRef.current.leftClick) {
+      const now = Date.now();
+      if (now - lastShot.current > 1000 / ROUNDS_PER_SECOND) {
+        const playerDirection = innerRef.current.getWorldDirection(v3);
+        const bullet = {
+          id: `${playerState.id}-${Date.now()}`,
+          position: rigidPosition,
+          direction: playerDirection,
+        };
+        actions.addBullet(bullet);
+        lastShot.current = now;
+      }
+    }
+
     // reset global control refs
     setMousePosition({ movementX: 0, movementY: 0 });
-    setDeltaY(0);
   });
   return (
     <>

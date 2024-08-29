@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Vector3, Group } from "three";
+import { Vector3, Group, Mesh } from "three";
 import {
   RigidBody,
   CapsuleCollider,

@@ -1,5 +1,5 @@
 "use client";
-import { KeyboardControls } from "@/hooks/useKeyboardControls";
+import { KeyboardControls } from "@react-three/drei";
 import type { KeyboardControlsEntry } from "@react-three/drei";
 import { useMemo, ReactNode } from "react";
 import { Controls } from "@/types/index";

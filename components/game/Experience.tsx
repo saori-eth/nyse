@@ -6,16 +6,18 @@ import {
 } from "@react-three/drei";
 import { Suspense, useEffect, useState } from "react";
 import { PlayerState, insertCoin, me, onPlayerJoin } from "playroomkit";
-import { useMousePosition } from "@/context/MouseProvider";
+import { useMouse } from "@/context/MouseProvider";
 import { useZoom } from "@/context/ZoomProvider";
 import { World } from "./World";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useStore } from "@/hooks/useStore";
 
 export const Experience = () => {
-  const { setMousePosition } = useMousePosition();
+  const { setMousePosition } = useMouse();
   const { setDeltaY } = useZoom();
   const [name] = useLocalStorage("name", "");
   const [color] = useLocalStorage("color", "");
+  const { actions } = useStore();
   const start = async () => {
     await insertCoin({
       maxPlayersPerRoom: 16,
@@ -28,6 +30,12 @@ export const Experience = () => {
       if (isMe) {
         player.setState("name", name || "Anon");
         player.setState("color", color || "red");
+        actions.addLocalEntity({
+          id: player.id,
+          name: name || "Anon",
+          color: color || "red",
+          type: "localPlayer",
+        });
       }
       player.onQuit(() => {
         console.log("Player quit", player);
@@ -56,9 +64,7 @@ export const Experience = () => {
     <Canvas
       className="absolute inset-0 w-full h-full bg-gray-900"
       onPointerDown={(e) => {
-        if (e.pointerType === "mouse") {
-          (e.target as HTMLCanvasElement).requestPointerLock();
-        }
+        (e.target as HTMLCanvasElement).requestPointerLock();
       }}
       onPointerMove={(e) => {
         if (!document.pointerLockElement) return;
