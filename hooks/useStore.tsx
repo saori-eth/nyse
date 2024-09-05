@@ -9,11 +9,10 @@ type Entity = {
   mesh?: Mesh;
 };
 
-type Bullet = {
+export type Bullet = {
   id: string;
-  position: Vector3;
-  direction: Vector3;
-  mesh?: Mesh;
+  position: [number, number, number];
+  direction: [number, number, number];
 };
 
 export type Store = {

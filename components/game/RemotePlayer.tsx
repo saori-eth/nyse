@@ -47,6 +47,10 @@ export const RemotePlayer = (props: RemotePlayerProps) => {
       colliders={false}
       enabledRotations={[false, false, false]}
       position={[0, 0.75, 0]}
+      userData={{
+        playerId: props.id,
+        type: "remotePlayer",
+      }}
     >
       <CapsuleCollider args={[0.2, 0.25]} mass={50} />
       <group ref={playerRef}>

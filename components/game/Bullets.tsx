@@ -2,7 +2,7 @@ import { useStore } from "@/hooks/useStore";
 import { useFrame } from "@react-three/fiber";
 import { RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { useEffect, useRef } from "react";
-import { type Vector3 } from "three";
+import { Vector3 } from "three";
 
 export const Bullets = () => {
   const { actions, selectors } = useStore();
@@ -35,15 +35,16 @@ const Bullet = ({
   direction,
 }: {
   id: string;
-  position: Vector3;
-  direction: Vector3;
+  position: [number, number, number];
+  direction: [number, number, number];
 }) => {
   const { actions } = useStore();
   const physicsRef = useRef<RapierRigidBody>(null);
 
   useEffect(() => {
     if (!physicsRef.current) return;
-    physicsRef.current.setLinvel(direction.multiplyScalar(BULLET_SPEED), true);
+    const dir = new Vector3(...direction);
+    physicsRef.current.setLinvel(dir.multiplyScalar(BULLET_SPEED), true);
   }, []);
   return (
     <group position={position}>

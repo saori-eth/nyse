@@ -5,12 +5,12 @@ import {
   PerspectiveCamera,
 } from "@react-three/drei";
 import { Suspense, useEffect, useState } from "react";
-import { PlayerState, insertCoin, me, onPlayerJoin } from "playroomkit";
+import { PlayerState, RPC, insertCoin, me, onPlayerJoin } from "playroomkit";
 import { useMouse } from "@/context/MouseProvider";
 import { useZoom } from "@/context/ZoomProvider";
 import { World } from "./World";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { useStore } from "@/hooks/useStore";
+import { Bullet, useStore } from "@/hooks/useStore";
 
 export const Experience = () => {
   const { setMousePosition } = useMouse();
@@ -40,6 +40,11 @@ export const Experience = () => {
       player.onQuit(() => {
         console.log("Player quit", player);
       });
+    });
+    // @ts-expect-error
+    RPC.register("addBullet", (data: Bullet, caller: any) => {
+      console.log("player", caller.id, "added bullet", data);
+      actions.addBullet(data);
     });
   };
   useEffect(() => {
