@@ -1,12 +1,14 @@
 import { useStore } from "@/hooks/useStore";
 import { useFrame } from "@react-three/fiber";
 import { RapierRigidBody, RigidBody } from "@react-three/rapier";
+import { RPC } from "playroomkit";
 import { useEffect, useRef } from "react";
 import { Vector3 } from "three";
 
 export const Bullets = () => {
   const { actions, selectors } = useStore();
   const bullets = selectors.getBullets();
+  const entityId = selectors.getLocalEntity()?.id;
 
   useFrame(() => {
     const now = Date.now();
@@ -22,7 +24,11 @@ export const Bullets = () => {
   return (
     <group>
       {bullets.map((bullet) => (
-        <Bullet key={bullet.id} {...bullet} />
+        <Bullet
+          key={bullet.id}
+          entityId={entityId ? entityId : ""}
+          {...bullet}
+        />
       ))}
     </group>
   );
@@ -30,16 +36,19 @@ export const Bullets = () => {
 
 const BULLET_SPEED = 10;
 const Bullet = ({
+  entityId,
   id,
   position,
   direction,
 }: {
+  entityId: string;
   id: string;
   position: [number, number, number];
   direction: [number, number, number];
 }) => {
   const { actions } = useStore();
   const physicsRef = useRef<RapierRigidBody>(null);
+  const bulletEntityId = id.split("-")[0];
 
   useEffect(() => {
     if (!physicsRef.current) return;
@@ -53,14 +62,20 @@ const Bullet = ({
         gravityScale={0}
         sensor
         onIntersectionEnter={(e) => {
-          if (
+          // if bullet came from entity, and the type of collider it hit is "self", don't remove bullet
+          if (entityId === bulletEntityId) {
             //@ts-expect-error
-            e.other.rigidBody?.userData.type === "self" ||
+            if (e.other.rigidBody?.userData.type === "self") return;
             //@ts-expect-error
-            e.other.rigidBody?.userData.type === "bullet"
-          )
-            return;
-          console.log("hit", e);
+            if (e.other.rigidBody?.userData.type === "bullet") return;
+          }
+          // if bullet came from remote player, and the type of collider it hit is "remotePlayer", don't remove bullet
+          if (entityId !== bulletEntityId) {
+            //@ts-expect-error
+            if (e.other.rigidBody?.userData.type === "remotePlayer") return;
+            //@ts-expect-error
+            if (e.other.rigidBody?.userData.type === "bullet") return;
+          }
           actions.removeBullet(id);
         }}
         userData={{

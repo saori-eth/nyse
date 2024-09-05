@@ -42,8 +42,7 @@ export const Experience = () => {
       });
     });
     // @ts-expect-error
-    RPC.register("addBullet", (data: Bullet, caller: any) => {
-      console.log("player", caller.id, "added bullet", data);
+    RPC.register("addBullet", (data: Bullet) => {
       actions.addBullet(data);
     });
   };
