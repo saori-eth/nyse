@@ -48,6 +48,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
   const headRef = useRef<Group>(null);
   const lastShot = useRef(0);
   const { actions } = useStore();
+  const frameRef = useRef(0);
 
   useEffect(() => {
     // sleep initially so that the player doesn't fall through the floor
@@ -58,6 +59,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
   }, []);
 
   useFrame(({ camera }) => {
+    frameRef.current++;
     const physics = physicsRef.current;
     const player = playerRef.current;
     const cam = camRef.current;
@@ -78,9 +80,6 @@ export const PlayerController = (props: PlayerControllerProps) => {
 
     const direction = processMovement(controlState, player.rotation.y);
     const currLinvel = physics.linvel();
-
-    const physicsPosition = physics.translation();
-    const rigidPosition = vec3(physicsPosition);
 
     // process camera controls
     if (deltaY) {
@@ -116,10 +115,6 @@ export const PlayerController = (props: PlayerControllerProps) => {
       head.quaternion.setFromEuler(euler);
     }
 
-    // set player state
-    const innerRotation = inner.getWorldQuaternion(innerRot);
-    playerState.setState("rotation", innerRotation.toArray());
-    playerState.setState("position", rigidPosition.toArray());
     // dont move if no pointer lock
     let velY = currLinvel.y;
     const { jump } = get();
@@ -135,6 +130,9 @@ export const PlayerController = (props: PlayerControllerProps) => {
       }
     }
     physics.setLinvel(v3.set(direction.x, velY, direction.z), true);
+
+    const physicsPosition = physics.translation();
+    const rigidPosition = vec3(physicsPosition);
 
     if (mouseClicksRef.current.leftClick) {
       const now = Date.now();
@@ -154,6 +152,13 @@ export const PlayerController = (props: PlayerControllerProps) => {
     // reset global control refs
     setMousePosition({ movementX: 0, movementY: 0 });
     setDeltaY(0);
+
+    // set player state
+    // limit frames with return clause
+    if (frameRef.current % 30 !== 0) return;
+    const innerRotation = inner.getWorldQuaternion(innerRot);
+    playerState.setState("rotation", innerRotation.toArray());
+    playerState.setState("position", rigidPosition.toArray());
   });
   return (
     <>
