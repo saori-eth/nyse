@@ -22,6 +22,14 @@ export const RemotePlayer = (props: RemotePlayerProps) => {
   const { name, color } = props;
   const translation = useRef<Vector3>(new Vector3(0, 0, 0));
 
+  useEffect(() => {
+    if (!physicsRef.current || !props.id) return;
+    physicsRef.current.userData = {
+      playerId: props.id,
+      type: "remotePlayer",
+    };
+  }, [physicsRef, props.id]);
+
   useFrame((_, delta) => {
     const thisPlayer = playerRef.current;
     const physics = physicsRef.current;

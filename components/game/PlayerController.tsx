@@ -12,7 +12,7 @@ import {
   RigidBody,
   useRapier,
 } from "@react-three/rapier";
-import type { PlayerState } from "playroomkit";
+import { RPC, type PlayerState } from "playroomkit";
 import { vec3 } from "@react-three/rapier";
 import { isGrounded } from "./controls/isGrounded";
 import { useStore } from "@/hooks/useStore";
@@ -142,10 +142,11 @@ export const PlayerController = (props: PlayerControllerProps) => {
         const playerDirection = playerRef.current.getWorldDirection(v3);
         const bullet = {
           id: `${playerState.id}-${Date.now()}`,
-          position: rigidPosition,
-          direction: playerDirection,
+          position: rigidPosition.toArray(),
+          direction: playerDirection.toArray(),
         };
         actions.addBullet(bullet);
+        RPC.call("addBullet", bullet, RPC.Mode.OTHERS);
         lastShot.current = now;
       }
     }
