@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Vector3, Group, Mesh } from "three";
+import { Vector3, Group, Mesh, Quaternion } from "three";
 import {
   RigidBody,
   CapsuleCollider,
@@ -16,11 +16,15 @@ interface RemotePlayerProps {
   color: string;
 }
 
+const q1 = new Quaternion();
 export const RemotePlayer = (props: RemotePlayerProps) => {
   const physicsRef = useRef<RapierRigidBody>(null);
   const playerRef = useRef<Group>(null);
   const { name, color } = props;
   const translation = useRef<Vector3>(new Vector3(0, 0, 0));
+  const networkPosition = useRef<NetworkedVector3>(
+    new NetworkedVector3([0, 0, 0], 1 / 8)
+  );
 
   useEffect(() => {
     if (!physicsRef.current || !props.id) return;
@@ -32,20 +36,22 @@ export const RemotePlayer = (props: RemotePlayerProps) => {
 
   useFrame((_, delta) => {
     const thisPlayer = playerRef.current;
+    if (!thisPlayer || !networkPosition.current) {
+      networkPosition.current = new NetworkedVector3([0, 0, 0], 1 / 8);
+      console.log(networkPosition.current);
+    }
     const physics = physicsRef.current;
     if (!thisPlayer || !physics) return;
     const newPosition = props.position;
     const newRotation = props.rotation;
     if (!newPosition || !newRotation) return;
-    translation.current.set(...newPosition);
-    const vec = {
-      x: translation.current.x,
-      y: translation.current.y,
-      z: translation.current.z,
-    };
-    physics.setTranslation(vec, true);
-    // thisPlayer.position.lerp(translation.current, delta * 10);
-    thisPlayer.quaternion.set(...newRotation);
+    networkPosition.current.update(newPosition, 0, delta);
+    const pos = networkPosition.current.value;
+    translation.current.set(pos.x, pos.y, pos.z);
+    physics.setTranslation(translation.current, true);
+    // thisPlayer.quaternion.set(...newRotation);
+    q1.set(...newRotation);
+    thisPlayer.quaternion.slerp(q1, delta * 10);
   });
 
   return (
@@ -83,3 +89,43 @@ export const RemotePlayer = (props: RemotePlayerProps) => {
     </RigidBody>
   );
 };
+
+const v1 = new Vector3();
+
+export class NetworkedVector3 {
+  value: Vector3;
+  rate: number;
+  previous: Vector3;
+  current: Vector3;
+  time: number;
+  snapToken: number;
+  constructor(value: [number, number, number], rate: number) {
+    this.value = new Vector3().fromArray(value);
+    this.rate = rate; // receive rate eg 1/5 for 5hz
+    this.previous = new Vector3().copy(this.value);
+    this.current = new Vector3().copy(this.value);
+    this.time = 0;
+    this.snapToken = 0;
+  }
+
+  update(value: [number, number, number], snapToken: number, delta: number) {
+    const vecValue = v1.fromArray(value);
+    if (!this.current.equals(vecValue)) {
+      if (this.snapToken !== snapToken) {
+        this.snapToken = snapToken;
+        this.previous.copy(vecValue);
+        this.current.copy(vecValue);
+        this.value.copy(vecValue);
+      } else {
+        this.previous.copy(this.current);
+        this.current.copy(vecValue);
+      }
+      this.time = 0;
+    }
+    this.time += delta;
+    let alpha = this.time / this.rate;
+    if (alpha > 1) alpha = 1;
+    this.value.lerpVectors(this.previous, this.current, alpha);
+    return this;
+  }
+}

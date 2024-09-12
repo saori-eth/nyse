@@ -21,7 +21,7 @@ export const Experience = () => {
   const start = async () => {
     await insertCoin({
       maxPlayersPerRoom: 16,
-      roomCode: "test",
+      roomCode: "dev",
       skipLobby: true,
     });
     onPlayerJoin((player: PlayerState) => {
