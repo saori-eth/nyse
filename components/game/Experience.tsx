@@ -11,21 +11,25 @@ import { useZoom } from "@/context/ZoomProvider";
 import { World } from "./World";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Bullet, useStore } from "@/hooks/useStore";
+const env = process.env.NEXT_PUBLIC_ENV;
+console.log("env", env);
 
 export const Experience = () => {
-  if (typeof window === "undefined") return null;
-  const isLocal = window.location.hostname === "localhost";
   const { setMousePosition } = useMouse();
   const { setDeltaY } = useZoom();
   const [name] = useLocalStorage("name", "");
   const [color] = useLocalStorage("color", "");
   const { actions } = useStore();
   const start = async () => {
-    await insertCoin({
-      maxPlayersPerRoom: 16,
-      roomCode: isLocal ? "dev" : "test",
-      skipLobby: true,
-    });
+    try {
+      await insertCoin({
+        maxPlayersPerRoom: 16,
+        roomCode: env === "dev" ? "dev" : "test",
+        skipLobby: true,
+      });
+    } catch (error) {
+      console.error("Error joining room", error);
+    }
     onPlayerJoin((player: PlayerState) => {
       const isMe = player.id === me().id;
       console.log("Player joined", player);

@@ -23,12 +23,10 @@ export const RemotePlayer = (props: RemotePlayerProps) => {
   const playerRef = useRef<Group>(null);
   const { name, color } = props;
 
-  // Refs to hold the current and target positions
   const currentPosition = useRef(new Vector3(0, 0, 0));
   const targetPosition = useRef(new Vector3(0, 0, 0));
 
-  const lerpFactor = 0.1; // Adjust this factor to control interpolation speed
-
+  const lerpFactor = 0.1;
   useBeforePhysicsStep(() => {
     const thisPlayer = playerRef.current;
     const physics = physicsRef.current;
@@ -37,13 +35,8 @@ export const RemotePlayer = (props: RemotePlayerProps) => {
     const newPosition = props.position;
     if (!newPosition) return;
 
-    // Update the target position
     targetPosition.current.set(...newPosition);
-
-    // Interpolate current position towards the target position
     currentPosition.current.lerp(targetPosition.current, lerpFactor);
-
-    // Apply the interpolated position to the physics body
     physics.setTranslation(currentPosition.current, true);
   });
 
