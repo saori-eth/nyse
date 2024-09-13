@@ -158,7 +158,6 @@ export const PlayerController = (props: PlayerControllerProps) => {
     // set player state
     // Update state 8 times per second
     if (currentTime - lastUpdateTime.current >= UPDATE_INTERVAL) {
-      console.log("Updating player state");
       playerState.setState("position", rigidPosition.toArray());
       const innerRotation = inner.getWorldQuaternion(innerRot);
       playerState.setState("rotation", innerRotation.toArray());

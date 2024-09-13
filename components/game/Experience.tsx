@@ -13,6 +13,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Bullet, useStore } from "@/hooks/useStore";
 
 export const Experience = () => {
+  const isLocal = window.location.hostname === "localhost";
   const { setMousePosition } = useMouse();
   const { setDeltaY } = useZoom();
   const [name] = useLocalStorage("name", "");
@@ -21,7 +22,7 @@ export const Experience = () => {
   const start = async () => {
     await insertCoin({
       maxPlayersPerRoom: 16,
-      roomCode: "dev",
+      roomCode: isLocal ? "dev" : "test",
       skipLobby: true,
     });
     onPlayerJoin((player: PlayerState) => {
