@@ -13,6 +13,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Bullet, useStore } from "@/hooks/useStore";
 
 export const Experience = () => {
+  if (typeof window === "undefined") return null;
   const isLocal = window.location.hostname === "localhost";
   const { setMousePosition } = useMouse();
   const { setDeltaY } = useZoom();
