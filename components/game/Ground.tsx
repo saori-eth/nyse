@@ -1,17 +1,10 @@
-import { Box } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 export const Ground = () => {
+  const { scene: map } = useGLTF("/map.glb");
   return (
-    <RigidBody type="fixed">
-      <Box args={[50, 0.1, 50]} position={[0, -0.05, 0]}>
-        <gridHelper args={[50, 25]} />
-        <meshPhongMaterial
-          attach="material"
-          color="#474747"
-          opacity={0.5}
-          transparent
-        />
-      </Box>
+    <RigidBody type="fixed" colliders="trimesh" position={[0, -0.05, 0]}>
+      <primitive object={map} />
     </RigidBody>
   );
 };

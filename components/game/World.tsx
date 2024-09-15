@@ -12,10 +12,9 @@ export const World = (props: WorldProps) => {
   const [name] = useLocalStorage("name", "");
   const [color] = useLocalStorage("color", "");
 
-  const { mobile } = props;
   return (
-    <Physics debug>
-      <ambientLight intensity={0.5} />
+    <Physics>
+      <ambientLight intensity={1} />
       <Ground />
       <Players user={{ name: name || "Anon", color: color || "red" }} />
       <Bullets />
