@@ -14,6 +14,8 @@ export const Experience = () => {
   const { setDeltaY } = useZoom();
   const [name] = useLocalStorage("name", "");
   const [color] = useLocalStorage("color", "");
+  const [mobile, setMobile] = useState(false);
+
   const { actions } = useStore();
   const start = async () => {
     try {
@@ -56,7 +58,6 @@ export const Experience = () => {
     console.log("Starting game", name, color);
     start();
   }, [name, color]);
-  const [mobile, setMobile] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
     setMobile(window.innerWidth < 768);

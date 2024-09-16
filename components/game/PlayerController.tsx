@@ -108,12 +108,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
     let velY = currLinvel.y;
     const { jump } = get();
     if (jump) {
-      const newTranslation = physics.translation();
-      const grounded = isGrounded(rapierData, {
-        x: newTranslation.x,
-        y: newTranslation.y + 0.01,
-        z: newTranslation.z,
-      });
+      const grounded = isGrounded(rapierData, physics);
       if (grounded) {
         velY = 5;
       }
