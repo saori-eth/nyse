@@ -22,7 +22,7 @@ interface PlayerControllerProps {
   player: PlayerState;
 }
 const CAMERA_DISTANCE = 10;
-const MIN_POLAR_ANGLE = 0; // Minimum vertical angle (downwards)
+const MIN_POLAR_ANGLE = -Math.PI / 2; // Minimum vertical angle (downwards)
 const MAX_POLAR_ANGLE = Math.PI / 2; // Maximum vertical angle (upwards)
 const CAM_SENSITIVITY = 200;
 const innerRot = new Quaternion();

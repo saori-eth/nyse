@@ -4,6 +4,7 @@ import { Map } from "./Map";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Bullets } from "./Bullets";
 import { Camera } from "./Camera";
+import { Perf } from "r3f-perf";
 
 interface WorldProps {
   mobile: boolean;
@@ -14,7 +15,8 @@ export const World = (props: WorldProps) => {
   const [color] = useLocalStorage("color", "");
 
   return (
-    <Physics debug>
+    <Physics>
+      <Perf />
       <ambientLight intensity={1} />
       <Map />
       <Players user={{ name: name || "Anon", color: color || "red" }} />

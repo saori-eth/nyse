@@ -21,7 +21,9 @@ export const LocalPlayer = (props: LocalPlayerProps) => {
 
   useEffect(() => {
     const { current: mesh } = meshRef;
+    console.log("mesh", mesh);
     if (!mesh) return;
+    console.log("mesh", mesh);
     actions.addLocalEntity({
       id: player.id,
       name,
@@ -46,7 +48,7 @@ export const LocalPlayer = (props: LocalPlayerProps) => {
             {name}
           </Text>
         </Billboard>
-        <mesh>
+        <mesh ref={meshRef} userData={{ name: "localPlayer" }}>
           <boxGeometry args={[0.5, 0.5, 0.5]} />
           <meshStandardMaterial color={color} />
         </mesh>
