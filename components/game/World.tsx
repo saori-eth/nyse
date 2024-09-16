@@ -1,6 +1,6 @@
 import { Physics, RigidBody } from "@react-three/rapier";
 import { Players } from "./Players";
-import { Ground } from "./Ground";
+import { Map } from "./Map";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Bullets } from "./Bullets";
 import { Camera } from "./Camera";
@@ -14,9 +14,9 @@ export const World = (props: WorldProps) => {
   const [color] = useLocalStorage("color", "");
 
   return (
-    <Physics>
+    <Physics debug>
       <ambientLight intensity={1} />
-      <Ground />
+      <Map />
       <Players user={{ name: name || "Anon", color: color || "red" }} />
       <Camera />
       <Bullets />

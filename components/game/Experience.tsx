@@ -51,6 +51,10 @@ export const Experience = () => {
     RPC.register("addBullet", (data: Bullet) => {
       actions.addBullet(data);
     });
+    // @ts-expect-error
+    RPC.register("removeBullet", (id: string) => {
+      actions.removeBullet(id);
+    });
   };
   useEffect(() => {
     if (!name || !color) return;

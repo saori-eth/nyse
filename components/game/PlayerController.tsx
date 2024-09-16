@@ -11,10 +11,11 @@ import {
   RigidBody,
   useRapier,
 } from "@react-three/rapier";
-import { RPC, type PlayerState } from "playroomkit";
+import { type PlayerState } from "playroomkit";
 import { vec3 } from "@react-three/rapier";
 import { isGrounded } from "./controls/isGrounded";
 import { useStore } from "@/hooks/useStore";
+import { Gun } from "./Gun";
 
 interface PlayerControllerProps {
   children: ReactNode;
@@ -24,7 +25,6 @@ const CAMERA_DISTANCE = 10;
 const MIN_POLAR_ANGLE = 0; // Minimum vertical angle (downwards)
 const MAX_POLAR_ANGLE = Math.PI / 2; // Maximum vertical angle (upwards)
 const CAM_SENSITIVITY = 200;
-const ROUNDS_PER_SECOND = 10;
 const innerRot = new Quaternion();
 const v1 = new Vector3();
 const v2 = new Vector3();
@@ -32,14 +32,13 @@ const euler = new Euler(0, 0, 0, "YXZ");
 export const PlayerController = (props: PlayerControllerProps) => {
   const playerState = props.player;
   const [, get] = useKeyboardControls<Controls>();
-  const { mousePositionRef, setMousePosition, mouseClicksRef } = useMouse();
+  const { mousePositionRef, setMousePosition } = useMouse();
   const physicsRef = useRef<RapierRigidBody>(null);
   const playerRef = useRef<Group>(null);
   const rapierData = useRapier();
   const innerRef = useRef<any>();
   const camRef = useRef<Group>(null);
   const headRef = useRef<Group>(null);
-  const lastShot = useRef(0);
   const { selectors, actions } = useStore();
   const localEntity = selectors.getLocalEntity();
   const lastUpdateTime = useRef(0);
@@ -105,7 +104,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
       head.quaternion.setFromEuler(euler);
     }
 
-    // dont move if no pointer lock
+    // jump
     let velY = currLinvel.y;
     const { jump } = get();
     if (jump) {
@@ -119,25 +118,12 @@ export const PlayerController = (props: PlayerControllerProps) => {
         velY = 5;
       }
     }
+
+    // apply movement / jump
     physics.setLinvel(v2.set(direction.x, velY, direction.z), true);
 
     const physicsPosition = physics.translation();
     const rigidPosition = vec3(physicsPosition);
-
-    if (mouseClicksRef.current.leftClick) {
-      const now = Date.now();
-      if (now - lastShot.current > 1000 / ROUNDS_PER_SECOND) {
-        const playerDirection = playerRef.current.getWorldDirection(v2);
-        const bullet = {
-          id: `${playerState.id}-${Date.now()}`,
-          position: rigidPosition.toArray(),
-          direction: playerDirection.toArray(),
-        };
-        actions.addBullet(bullet);
-        RPC.call("addBullet", bullet, RPC.Mode.OTHERS);
-        lastShot.current = now;
-      }
-    }
 
     // reset global control refs
     setMousePosition({ movementX: 0, movementY: 0 });
@@ -168,6 +154,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
           <group ref={innerRef}>{props.children}</group>
         </group>
       </RigidBody>
+      <Gun />
     </>
   );
 };

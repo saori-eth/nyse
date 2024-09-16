@@ -34,7 +34,7 @@ export const Bullets = () => {
   );
 };
 
-const BULLET_SPEED = 10;
+const BULLET_SPEED = 30;
 const Bullet = ({
   entityId,
   id,
@@ -69,14 +69,14 @@ const Bullet = ({
             //@ts-expect-error
             if (e.other.rigidBody?.userData.type === "bullet") return;
           }
+
           // if bullet came from remote player, and the type of collider it hit is "remotePlayer", don't remove bullet
           if (entityId !== bulletEntityId) {
-            //@ts-expect-error
-            if (e.other.rigidBody?.userData.type === "remotePlayer") return;
             //@ts-expect-error
             if (e.other.rigidBody?.userData.type === "bullet") return;
           }
           actions.removeBullet(id);
+          RPC.call("removeBullet", id);
         }}
         userData={{
           type: "bullet",
