@@ -1,6 +1,9 @@
 import { Text, Billboard } from "@react-three/drei";
 import type { PlayerState } from "playroomkit";
 import { PlayerController } from "./PlayerController";
+import { useEffect, useRef } from "react";
+import { type Mesh } from "three";
+import { useStore } from "@/hooks/useStore";
 
 interface LocalPlayerProps {
   player: PlayerState;
@@ -13,6 +16,20 @@ interface LocalPlayerProps {
 export const LocalPlayer = (props: LocalPlayerProps) => {
   const player = props.player;
   const { name, color } = props.user;
+  const meshRef = useRef<Mesh>(null);
+  const { actions } = useStore();
+
+  useEffect(() => {
+    const { current: mesh } = meshRef;
+    if (!mesh) return;
+    actions.addLocalEntity({
+      id: player.id,
+      name,
+      color,
+      type: "localPlayer",
+      mesh,
+    });
+  }, [meshRef]);
 
   return (
     <>

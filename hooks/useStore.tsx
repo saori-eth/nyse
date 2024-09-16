@@ -1,4 +1,5 @@
-import type { Mesh, Vector3 } from "three";
+import { RapierRigidBody } from "@react-three/rapier";
+import type { Group, Mesh } from "three";
 import { create } from "zustand";
 
 type Entity = {
@@ -7,6 +8,9 @@ type Entity = {
   color?: string;
   type: "localPlayer" | "remotePlayer";
   mesh?: Mesh;
+  rigidBody?: RapierRigidBody;
+  head?: Group;
+  headCam?: Group;
 };
 
 export type Bullet = {
@@ -24,6 +28,9 @@ export type Store = {
     addEntity: (entity: Entity) => void;
     addBullet: (bullet: Bullet) => void;
     addMeshToEntity: (id: string, mesh: Mesh) => void;
+    addRigidBodyToEntity: (id: string, rigidBody: RapierRigidBody) => void;
+    addHeadToEntity: (id: string, head: Group) => void;
+    addHeadCamToEntity: (id: string, headCam: Group) => void;
     removeEntity: (id: string) => void;
     removeBullet: (id: string) => void;
   };
@@ -73,10 +80,55 @@ export const useStore = create<Store>((set, get) => ({
         };
       });
     },
+    addHeadToEntity: (id: string, head: Group) => {
+      set((state) => {
+        const entity = state.entities[id];
+        if (!entity || entity.head) return state;
+        return {
+          entities: {
+            ...state.entities,
+            [id]: {
+              ...entity,
+              head,
+            },
+          },
+        };
+      });
+    },
+    addHeadCamToEntity: (id: string, headCam: Group) => {
+      set((state) => {
+        const entity = state.entities[id];
+        if (!entity || entity.headCam) return state;
+        return {
+          entities: {
+            ...state.entities,
+            [id]: {
+              ...entity,
+              headCam,
+            },
+          },
+        };
+      });
+    },
     addBullet: (bullet: Bullet) => {
       set((state) => ({
         bullets: [...state.bullets, bullet],
       }));
+    },
+    addRigidBodyToEntity: (id: string, rigidBody: RapierRigidBody) => {
+      set((state) => {
+        const entity = state.entities[id];
+        if (!entity || entity.rigidBody) return state;
+        return {
+          entities: {
+            ...state.entities,
+            [id]: {
+              ...entity,
+              rigidBody,
+            },
+          },
+        };
+      });
     },
     removeBullet: (id: string) => {
       set((state) => ({

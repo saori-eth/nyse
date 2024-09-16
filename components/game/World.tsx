@@ -3,6 +3,7 @@ import { Players } from "./Players";
 import { Ground } from "./Ground";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Bullets } from "./Bullets";
+import { Camera } from "./Camera";
 
 interface WorldProps {
   mobile: boolean;
@@ -17,6 +18,7 @@ export const World = (props: WorldProps) => {
       <ambientLight intensity={1} />
       <Ground />
       <Players user={{ name: name || "Anon", color: color || "red" }} />
+      <Camera />
       <Bullets />
       <RigidBody type="fixed" userData={{ type: "environment" }}>
         <mesh position={[4, 1, 0]}>

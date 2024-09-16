@@ -4,7 +4,6 @@ import { processMovement, processRotation } from "./controls";
 import { useFrame } from "@react-three/fiber";
 import type { Controls } from "@/types";
 import { useMouse } from "@/context/MouseProvider";
-import { useZoom } from "@/context/ZoomProvider";
 import { Euler, type Group, Quaternion, Vector3 } from "three";
 import {
   CapsuleCollider,
@@ -17,14 +16,11 @@ import { vec3 } from "@react-three/rapier";
 import { isGrounded } from "./controls/isGrounded";
 import { useStore } from "@/hooks/useStore";
 
-const CAMERA_DISTANCE = 10;
-const MIN_DISTANCE = 1; // Minimum camera distance
-const MAX_DISTANCE = 20; // Maximum camera distance
-
 interface PlayerControllerProps {
   children: ReactNode;
   player: PlayerState;
 }
+const CAMERA_DISTANCE = 10;
 const MIN_POLAR_ANGLE = 0; // Minimum vertical angle (downwards)
 const MAX_POLAR_ANGLE = Math.PI / 2; // Maximum vertical angle (upwards)
 const CAM_SENSITIVITY = 200;
@@ -32,24 +28,35 @@ const ROUNDS_PER_SECOND = 10;
 const innerRot = new Quaternion();
 const v1 = new Vector3();
 const v2 = new Vector3();
-const v3 = new Vector3();
 const euler = new Euler(0, 0, 0, "YXZ");
 export const PlayerController = (props: PlayerControllerProps) => {
   const playerState = props.player;
   const [, get] = useKeyboardControls<Controls>();
   const { mousePositionRef, setMousePosition, mouseClicksRef } = useMouse();
-  const { deltaYRef, setDeltaY } = useZoom();
   const physicsRef = useRef<RapierRigidBody>(null);
   const playerRef = useRef<Group>(null);
   const rapierData = useRapier();
   const innerRef = useRef<any>();
-  const distanceRef = useRef(CAMERA_DISTANCE);
   const camRef = useRef<Group>(null);
   const headRef = useRef<Group>(null);
   const lastShot = useRef(0);
-  const { actions } = useStore();
+  const { selectors, actions } = useStore();
+  const localEntity = selectors.getLocalEntity();
   const lastUpdateTime = useRef(0);
   const UPDATE_INTERVAL = 1000 / 8; // 8 times per second
+
+  useEffect(() => {
+    if (
+      !localEntity ||
+      !physicsRef.current ||
+      !headRef.current ||
+      !camRef.current
+    )
+      return;
+    actions.addRigidBodyToEntity(localEntity.id, physicsRef.current);
+    actions.addHeadToEntity(localEntity.id, headRef.current);
+    actions.addHeadCamToEntity(localEntity.id, camRef.current);
+  }, [localEntity?.mesh, localEntity?.head, localEntity?.headCam]);
 
   useEffect(() => {
     // sleep initially so that the player doesn't fall through the floor
@@ -59,42 +66,23 @@ export const PlayerController = (props: PlayerControllerProps) => {
     physics.userData = { type: "self" };
   }, []);
 
-  useFrame(({ camera, clock }) => {
+  useFrame(({ clock }) => {
     const currentTime = clock.getElapsedTime() * 1000; // Convert to milliseconds
-
     const physics = physicsRef.current;
     const player = playerRef.current;
-    const cam = camRef.current;
     const head = headRef.current;
     const inner = innerRef.current;
-    if (!player || !physics || !inner || !cam || !head) return;
+    if (!player || !physics || !inner || !head) return;
 
     const isPointerLocked = document.pointerLockElement;
 
     // movement controls
     const controlState = get();
 
-    // camera controls
-    const { current: distance } = distanceRef;
-    const { current: deltaY } = deltaYRef;
-
-    if (!distance) return;
-
     const direction = processMovement(controlState, player.rotation.y);
     const currLinvel = physics.linvel();
 
-    // process camera controls
-    if (deltaY) {
-      distanceRef.current = Math.max(
-        MIN_DISTANCE,
-        Math.min(MAX_DISTANCE, distanceRef.current + deltaY * 0.01)
-      );
-    }
-
     v1.setFromMatrixPosition(head.matrixWorld).y -= 0.2;
-    cam.position.set(0, -0.2, -distanceRef.current);
-    camera.position.lerp(v2.setFromMatrixPosition(cam.matrixWorld), 0.5);
-    camera.lookAt(v1);
 
     if (!isPointerLocked) {
       physics.sleep();
@@ -131,7 +119,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
         velY = 5;
       }
     }
-    physics.setLinvel(v3.set(direction.x, velY, direction.z), true);
+    physics.setLinvel(v2.set(direction.x, velY, direction.z), true);
 
     const physicsPosition = physics.translation();
     const rigidPosition = vec3(physicsPosition);
@@ -139,7 +127,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
     if (mouseClicksRef.current.leftClick) {
       const now = Date.now();
       if (now - lastShot.current > 1000 / ROUNDS_PER_SECOND) {
-        const playerDirection = playerRef.current.getWorldDirection(v3);
+        const playerDirection = playerRef.current.getWorldDirection(v2);
         const bullet = {
           id: `${playerState.id}-${Date.now()}`,
           position: rigidPosition.toArray(),
@@ -153,7 +141,6 @@ export const PlayerController = (props: PlayerControllerProps) => {
 
     // reset global control refs
     setMousePosition({ movementX: 0, movementY: 0 });
-    setDeltaY(0);
 
     // set player state
     // Update state 8 times per second

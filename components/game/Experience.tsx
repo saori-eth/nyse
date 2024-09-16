@@ -89,8 +89,6 @@ export const Experience = () => {
       }}
     >
       <Suspense fallback={null}>
-        <PerspectiveCamera makeDefault />
-
         <World mobile={mobile} />
       </Suspense>
     </Canvas>
