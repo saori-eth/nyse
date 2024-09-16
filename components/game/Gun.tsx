@@ -23,7 +23,7 @@ export const Gun = () => {
       if (now - lastShot.current > 1000 / ROUNDS_PER_SECOND) {
         camera.getWorldDirection(v1);
         const bullet = {
-          id: `${id}-${Date.now()}`,
+          id: `${id}~${Date.now()}`,
           position: [translation.x, translation.y, translation.z] as [
             number,
             number,

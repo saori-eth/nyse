@@ -8,12 +8,12 @@ import { Vector3 } from "three";
 export const Bullets = () => {
   const { actions, selectors } = useStore();
   const bullets = selectors.getBullets();
-  const entityId = selectors.getLocalEntity()?.id;
+  const myId = selectors.getLocalEntity()?.id;
 
   useFrame(() => {
     const now = Date.now();
     bullets.forEach((bullet) => {
-      const bulletTimestamp = bullet.id.split("-")[1];
+      const bulletTimestamp = bullet.id.split("~")[1];
       const timeSinceShot = now - Number(bulletTimestamp);
       if (timeSinceShot > 10000) {
         actions.removeBullet(bullet.id);
@@ -24,11 +24,7 @@ export const Bullets = () => {
   return (
     <group>
       {bullets.map((bullet) => (
-        <Bullet
-          key={bullet.id}
-          entityId={entityId ? entityId : ""}
-          {...bullet}
-        />
+        <Bullet key={bullet.id} myId={myId ? myId : ""} {...bullet} />
       ))}
     </group>
   );
@@ -36,22 +32,23 @@ export const Bullets = () => {
 
 const BULLET_SPEED = 30;
 const Bullet = ({
-  entityId,
+  myId,
   id,
   position,
   direction,
 }: {
-  entityId: string;
+  myId: string;
   id: string;
   position: [number, number, number];
   direction: [number, number, number];
 }) => {
   const { actions } = useStore();
   const physicsRef = useRef<RapierRigidBody>(null);
-  const bulletEntityId = id.split("-")[0];
+  const bulletEntityId = id.split("~")[0];
 
   useEffect(() => {
     if (!physicsRef.current) return;
+    console.log("my id: ", myId, "shooter id: ", bulletEntityId);
     const dir = new Vector3(...direction);
     physicsRef.current.setLinvel(dir.multiplyScalar(BULLET_SPEED), true);
   }, []);
@@ -63,7 +60,7 @@ const Bullet = ({
         sensor
         onIntersectionEnter={(e) => {
           // if bullet came from entity, and the type of collider it hit is "self", don't remove bullet
-          if (entityId === bulletEntityId) {
+          if (myId === bulletEntityId) {
             //@ts-expect-error
             if (e.other.rigidBody?.userData.type === "self") return;
             //@ts-expect-error
@@ -71,12 +68,14 @@ const Bullet = ({
           }
 
           // if bullet came from remote player, and the type of collider it hit is "remotePlayer", don't remove bullet
-          if (entityId !== bulletEntityId) {
+          if (myId !== bulletEntityId) {
+            //@ts-expect-error
+            if (e.other.rigidBody?.userData.type === "remotePlayer") return;
             //@ts-expect-error
             if (e.other.rigidBody?.userData.type === "bullet") return;
           }
+
           actions.removeBullet(id);
-          RPC.call("removeBullet", id);
         }}
         userData={{
           type: "bullet",
