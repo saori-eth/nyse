@@ -21,9 +21,7 @@ export const LocalPlayer = (props: LocalPlayerProps) => {
 
   useEffect(() => {
     const { current: mesh } = meshRef;
-    console.log("mesh", mesh);
     if (!mesh) return;
-    console.log("mesh", mesh);
     actions.addLocalEntity({
       id: player.id,
       name,

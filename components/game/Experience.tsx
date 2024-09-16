@@ -1,9 +1,5 @@
 "use client";
 import { Canvas } from "@react-three/fiber";
-import {
-  // OrbitControls,
-  PerspectiveCamera,
-} from "@react-three/drei";
 import { Suspense, useEffect, useState } from "react";
 import { PlayerState, RPC, insertCoin, me, onPlayerJoin } from "playroomkit";
 import { useMouse } from "@/context/MouseProvider";
@@ -12,7 +8,6 @@ import { World } from "./World";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Bullet, useStore } from "@/hooks/useStore";
 const env = process.env.NEXT_PUBLIC_ENV;
-console.log("env", env);
 
 export const Experience = () => {
   const { setMousePosition } = useMouse();

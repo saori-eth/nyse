@@ -1,7 +1,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useStore } from "@/hooks/useStore";
 import { useRef } from "react";
-import { Box3, Mesh, Sphere, Vector3 } from "three";
+import { Box3, Sphere, Vector3 } from "three";
 import { useZoom } from "@/context/ZoomProvider";
 import { PerspectiveCamera } from "@react-three/drei";
 

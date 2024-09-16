@@ -6,14 +6,14 @@ import { useMouse } from "@/context/MouseProvider";
 import { RPC } from "playroomkit";
 
 const v1 = new Vector3();
-const ROUNDS_PER_SECOND = 2;
+const ROUNDS_PER_SECOND = 30;
 export const Gun = () => {
   const { selectors, actions } = useStore();
   const localEntity = selectors.getLocalEntity();
   const lastShot = useRef(0);
   const { mouseClicksRef } = useMouse();
 
-  useFrame(({ camera }, delta) => {
+  useFrame(({ camera }) => {
     if (!localEntity) return;
     const { id, rigidBody } = localEntity;
     if (!id || !rigidBody) return;

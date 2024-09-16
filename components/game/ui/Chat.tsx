@@ -26,7 +26,6 @@ const ChatBox = () => {
   useEffect(scrollToBottom, [messages]);
 
   const handleSend = () => {
-    console.log("my player", myPlayer());
     if (inputText.trim() !== "") {
       setMessages([
         ...messages,

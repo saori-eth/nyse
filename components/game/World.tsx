@@ -1,4 +1,4 @@
-import { Physics, RigidBody } from "@react-three/rapier";
+import { Physics } from "@react-three/rapier";
 import { Players } from "./Players";
 import { Map } from "./Map";
 import { useLocalStorage } from "@/hooks/useLocalStorage";

@@ -1,7 +1,6 @@
 import { useStore } from "@/hooks/useStore";
 import { useFrame } from "@react-three/fiber";
 import { RapierRigidBody, RigidBody } from "@react-three/rapier";
-import { RPC } from "playroomkit";
 import { useEffect, useRef } from "react";
 import { Vector3 } from "three";
 
@@ -48,7 +47,6 @@ const Bullet = ({
 
   useEffect(() => {
     if (!physicsRef.current) return;
-    console.log("my id: ", myId, "shooter id: ", bulletEntityId);
     const dir = new Vector3(...direction);
     physicsRef.current.setLinvel(dir.multiplyScalar(BULLET_SPEED), true);
   }, []);
