@@ -22,6 +22,12 @@ export const LocalPlayer = (props: LocalPlayerProps) => {
   useEffect(() => {
     const { current: mesh } = meshRef;
     if (!mesh) return;
+    mesh.traverse((child) => {
+      if (child.type === "Mesh") {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
     actions.addLocalEntity({
       id: player.id,
       name,
