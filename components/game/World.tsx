@@ -20,12 +20,6 @@ export const World = (props: WorldProps) => {
       <Players user={{ name: name || "Anon", color: color || "red" }} />
       <Camera />
       <Bullets />
-      <RigidBody type="fixed" userData={{ type: "environment" }}>
-        <mesh position={[4, 1, 0]}>
-          <boxGeometry args={[2, 2, 2]} />
-          <meshStandardMaterial color="black" />
-        </mesh>
-      </RigidBody>
     </Physics>
   );
 };
