@@ -34,7 +34,11 @@ const RoundedRect = ({
   radius: number;
 }) => {
   // Function to create a rounded rectangle shape
-  const createRoundedRectShape = (width, height, radius) => {
+  const createRoundedRectShape = (
+    width: number,
+    height: number,
+    radius: number
+  ) => {
     const shape = new Shape();
     const x = -width / 2;
     const y = -height / 2;
