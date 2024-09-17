@@ -27,21 +27,41 @@ export const Map = ({ mode = "glb" }: { mode?: "basic" | "glb" }) => {
           <primitive object={map} />
         </RigidBody>
       ) : (
-        <>
-          <RigidBody type="fixed" position={[-5, 0, 0]}>
-            <mesh userData={{ name: "middlebox" }}>
-              <boxGeometry args={[5, 5, 5]} />
-              <meshStandardMaterial color="white" />
-            </mesh>
-          </RigidBody>
-          <RigidBody type="fixed">
-            <mesh userData={{ name: "ground" }}>
-              <boxGeometry args={[100, 0.1, 100]} />
-              <meshStandardMaterial color="gray" />
-            </mesh>
-          </RigidBody>
-        </>
+        <BasicMap />
       )}
+    </>
+  );
+};
+
+const BasicMap = () => {
+  return (
+    <>
+      <RigidBody
+        type="fixed"
+        position={[-5, 0, 0]}
+        userData={{ name: "middlebox" }}
+      >
+        <mesh castShadow receiveShadow>
+          <boxGeometry args={[5, 5, 5]} />
+          <meshStandardMaterial color="white" />
+        </mesh>
+      </RigidBody>
+      <RigidBody type="fixed" userData={{ name: "ground" }}>
+        <mesh castShadow receiveShadow>
+          <boxGeometry args={[100, 0.1, 100]} />
+          <meshStandardMaterial color="gray" />
+        </mesh>
+      </RigidBody>
+      <RigidBody
+        type="fixed"
+        position={[0, 0.5, -10]}
+        userData={{ name: "environment" }}
+      >
+        <mesh castShadow receiveShadow>
+          <boxGeometry args={[20, 2, 0.25]} />
+          <meshStandardMaterial color="lightblue" />
+        </mesh>
+      </RigidBody>
     </>
   );
 };

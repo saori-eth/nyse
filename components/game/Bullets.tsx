@@ -1,6 +1,6 @@
 import { useStore } from "@/hooks/useStore";
 import { useFrame } from "@react-three/fiber";
-import { RapierRigidBody, RigidBody } from "@react-three/rapier";
+import { RapierRigidBody, RigidBody, useRapier } from "@react-three/rapier";
 import { useEffect, useRef } from "react";
 import { Vector3, Mesh } from "three";
 
@@ -29,7 +29,7 @@ export const Bullets = () => {
   );
 };
 
-const BULLET_SPEED = 30;
+const BULLET_SPEED = 20;
 const Bullet = ({
   myId,
   id,
@@ -45,6 +45,7 @@ const Bullet = ({
   const physicsRef = useRef<RapierRigidBody>(null);
   const meshRef = useRef<Mesh>(null);
   const bulletEntityId = id.split("~")[0];
+  const rapier = useRapier();
 
   useEffect(() => {
     if (!physicsRef.current) return;
@@ -63,6 +64,7 @@ const Bullet = ({
         ref={physicsRef}
         gravityScale={0}
         sensor
+        ccd
         onIntersectionEnter={(e) => {
           // if bullet came from entity, and the type of collider it hit is "self", don't remove bullet
           if (myId === bulletEntityId) {
