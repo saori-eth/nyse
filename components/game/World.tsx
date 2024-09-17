@@ -4,7 +4,9 @@ import { Map } from "./Map";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Bullets } from "./Bullets";
 import { Camera } from "./Camera";
-import { Perf } from "r3f-perf";
+import { ToggleablePerf } from "./ui/ToggleablePerf";
+import { Environment } from "@react-three/drei";
+import { Skybox } from "./Skybox";
 
 interface WorldProps {
   mobile: boolean;
@@ -16,8 +18,11 @@ export const World = (props: WorldProps) => {
 
   return (
     <Physics>
-      <Perf />
-      <ambientLight intensity={1} />
+      <ToggleablePerf />
+      <Environment preset="night" />
+      <Skybox />
+      <ambientLight intensity={0.5} />
+
       <directionalLight
         position={[10, 10, 5]}
         intensity={1}

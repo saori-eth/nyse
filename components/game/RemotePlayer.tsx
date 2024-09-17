@@ -8,6 +8,7 @@ import {
   useBeforePhysicsStep,
 } from "@react-three/rapier";
 import { Billboard, Text } from "@react-three/drei";
+import { NamePlate } from "./NamePlate";
 
 interface RemotePlayerProps {
   id: string;
@@ -67,23 +68,7 @@ export const RemotePlayer = (props: RemotePlayerProps) => {
     >
       <CapsuleCollider args={[0.2, 0.25]} mass={50} />
       <group ref={playerRef}>
-        <Billboard
-          follow={true}
-          lockX={false}
-          lockY={false}
-          lockZ={false}
-          position={[0, 0.35, 0]}
-        >
-          <Text
-            color="white"
-            anchorX="center"
-            anchorY="middle"
-            fontSize={0.1}
-            outlineColor="black"
-          >
-            {name}
-          </Text>
-        </Billboard>
+        <NamePlate name={name} />
         <mesh>
           <boxGeometry args={[0.5, 0.5, 0.5]} />
           <meshStandardMaterial color={color} />
