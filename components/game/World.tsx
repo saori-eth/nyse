@@ -15,7 +15,7 @@ export const World = (props: WorldProps) => {
   const [color] = useLocalStorage("color", "");
 
   return (
-    <Physics>
+    <Physics debug>
       <Perf />
       <ambientLight intensity={1} />
       <Map />

@@ -6,7 +6,7 @@ import { useMouse } from "@/context/MouseProvider";
 import { RPC } from "playroomkit";
 
 const v1 = new Vector3();
-const ROUNDS_PER_SECOND = 30;
+const ROUNDS_PER_SECOND = 5;
 export const Gun = () => {
   const { selectors, actions } = useStore();
   const localEntity = selectors.getLocalEntity();
@@ -16,9 +16,9 @@ export const Gun = () => {
   useFrame(({ camera }) => {
     if (!localEntity) return;
     const { id, rigidBody } = localEntity;
-    if (!id || !rigidBody) return;
-    const translation = rigidBody.translation();
+    if (!id || !rigidBody) return console.error("Gun.tsx: no ID or rigid body");
     if (mouseClicksRef.current.leftClick) {
+      const translation = rigidBody.translation();
       const now = Date.now();
       if (now - lastShot.current > 1000 / ROUNDS_PER_SECOND) {
         camera.getWorldDirection(v1);

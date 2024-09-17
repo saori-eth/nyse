@@ -2,7 +2,7 @@ import { useStore } from "@/hooks/useStore";
 import { useFrame } from "@react-three/fiber";
 import { RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { useEffect, useRef } from "react";
-import { Vector3 } from "three";
+import { Vector3, Mesh } from "three";
 
 export const Bullets = () => {
   const { actions, selectors } = useStore();
@@ -43,13 +43,20 @@ const Bullet = ({
 }) => {
   const { actions } = useStore();
   const physicsRef = useRef<RapierRigidBody>(null);
+  const meshRef = useRef<Mesh>(null);
   const bulletEntityId = id.split("~")[0];
 
   useEffect(() => {
     if (!physicsRef.current) return;
+    physicsRef.current.userData = {
+      type: "bullet",
+      playerId: id.split("-")[0],
+      damage: 10,
+    };
     const dir = new Vector3(...direction);
     physicsRef.current.setLinvel(dir.multiplyScalar(BULLET_SPEED), true);
   }, []);
+
   return (
     <group position={position}>
       <RigidBody
@@ -72,16 +79,12 @@ const Bullet = ({
             //@ts-expect-error
             if (e.other.rigidBody?.userData.type === "bullet") return;
           }
-
+          // @ts-expect-error
+          meshRef.current?.material.color.set("white");
           actions.removeBullet(id);
         }}
-        userData={{
-          type: "bullet",
-          playerId: id.split("-")[0],
-          damage: 10,
-        }}
       >
-        <mesh>
+        <mesh ref={meshRef}>
           <sphereGeometry args={[0.1, 32, 32]} />
           <meshStandardMaterial color="red" />
         </mesh>

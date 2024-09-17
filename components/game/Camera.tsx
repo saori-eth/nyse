@@ -24,7 +24,8 @@ export const Camera = () => {
   useFrame((_, delta) => {
     if (!localEntity) return;
     const { head, headCam, mesh } = localEntity;
-    if (!head || !headCam || !mesh) return;
+    if (!head || !headCam || !mesh)
+      return console.error("Camera.tsx: no head, headCam, or mesh");
 
     bbox.setFromObject(mesh);
     bbox.getBoundingSphere(sphere);
