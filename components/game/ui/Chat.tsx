@@ -15,6 +15,7 @@ const ChatBox = () => {
   }, [messages]);
   const [inputText, setInputText] = useState("");
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null); // Added input ref
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
@@ -29,14 +30,34 @@ const ChatBox = () => {
     if (inputText.trim() !== "") {
       setMessages([
         ...messages,
-        { id: messages.length + 1, text: inputText, playerId: playerId },
+        {
+          id: messages.length + 1,
+          text: inputText,
+          playerId: playerId,
+          name: name,
+        },
       ]);
       setInputText("");
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && document.activeElement !== inputRef.current) {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []); // Added useEffect for key events
+
   return (
-    <div className="absolute bottom-4 left-4 w-80 h-96 bg-gray-900 bg-transparent bg-opacity-40 rounded-lg shadow-lg flex flex-col z-50 overflow-hidden border border-gray-700">
+    <div className="absolute bottom-4 left-4 w-80 h-60 bg-gray-900/40 backdrop-blur rounded-xl shadow-lg flex flex-col z-50 overflow-hidden border border-gray-700">
       <div
         ref={messagesContainerRef}
         className="flex-1 p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800 flex flex-col-reverse"
@@ -44,35 +65,44 @@ const ChatBox = () => {
         {messages
           .slice()
           .reverse()
-          .map((message: any) => (
-            <div
-              key={message.id}
-              className={`mb-3 ${
-                message.playerId === playerId ? "text-right" : "text-left"
-              }`}
-            >
-              <span
-                className={`text-xs text-gray-400 ${
-                  message.playerId === playerId ? "mr-2" : "ml-2"
+          .map((message: any, index: number, array: any[]) => {
+            const prevMessage = array[index - 1];
+            const showName =
+              index === 0 || message.playerId !== prevMessage?.playerId;
+
+            return (
+              <div
+                key={message.id}
+                className={`mb-3 flex flex-col ${
+                  message.playerId === playerId ? "items-end" : "items-start"
                 }`}
               >
-                {message.playerId.slice(0, 4)}
-              </span>
-              <span
-                className={`inline-block p-2 rounded-lg ${
-                  message.playerId === playerId
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-700 text-gray-200"
-                } break-words max-w-[80%] overflow-wrap-anywhere hyphens-auto`}
-              >
-                {message.text}
-              </span>
-            </div>
-          ))}
+                <span
+                  className={`inline-block p-2 rounded-lg ${
+                    message.playerId === playerId
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-700 text-gray-200"
+                  } break-words max-w-[80%] overflow-wrap-anywhere hyphens-auto`}
+                >
+                  {message.text}
+                </span>
+                {showName && (
+                  <span
+                    className={`text-xs text-gray-400 ${
+                      message.playerId === playerId ? "mr-2" : "ml-2"
+                    }`}
+                  >
+                    {message.name}
+                  </span>
+                )}
+              </div>
+            );
+          })}
       </div>
-      <div className="p-3 bg-gray-800  bg-transparent bg-opacity-40">
+      <div className="p-3 bg-gray-800/40 backdrop-blur">
         <div className="flex items-center">
           <input
+            ref={inputRef} // Attached ref here
             type="text"
             value={inputText}
             onChange={(e) => {
@@ -83,26 +113,22 @@ const ChatBox = () => {
               e.stopPropagation();
               e.key === "Enter" && handleSend();
             }}
-            className="flex-1 p-2 bg-gray-700 text-gray-100 rounded-l-md focus:outline-none placeholder-gray-400 bg-transparent bg-opacity-40"
-            placeholder="Type a message..."
+            className="flex-1 p-2 bg-white/20 text-black rounded-l-md focus:outline-none placeholder-gray-900"
           />
           <button
             onClick={handleSend}
-            className="bg-blue-600 text-white p-2 rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="bg-blue-600 p-2 rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <svg
               className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
+              fill="#7c56566a"
+              stroke="#322b2b6a"
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-              ></path>
+              <path d="M8 4l8 8-8 8" />
             </svg>
           </button>
         </div>

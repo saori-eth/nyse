@@ -1,9 +1,9 @@
-import { Text, Billboard } from "@react-three/drei";
-import type { PlayerState } from "playroomkit";
-import { PlayerController } from "./PlayerController";
-import { useEffect, useRef } from "react";
-import { type Mesh } from "three";
+import { useRef, useEffect } from "react";
+import { Mesh } from "three";
 import { useStore } from "@/hooks/useStore";
+import { PlayerController } from "./PlayerController";
+import type { PlayerState } from "playroomkit";
+import { NamePlate } from "./NamePlate";
 
 interface LocalPlayerProps {
   player: PlayerState;
@@ -40,18 +40,7 @@ export const LocalPlayer = (props: LocalPlayerProps) => {
   return (
     <>
       <PlayerController player={player}>
-        <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
-          <Text
-            color="white"
-            anchorX="center"
-            anchorY="middle"
-            fontSize={0.1}
-            outlineColor="black"
-            position={[0, 0.35, 0]}
-          >
-            {name}
-          </Text>
-        </Billboard>
+        <NamePlate name={name} />
         <mesh
           ref={meshRef}
           userData={{ name: "localPlayer" }}

@@ -5,4 +5,5 @@ export enum Controls {
   right = "right",
   jump = "jump",
   sprint = "sprint",
+  enter = "chat",
 }

@@ -27,7 +27,9 @@ export const Map = ({ mode = "glb" }: { mode?: "basic" | "glb" }) => {
           <primitive object={map} />
         </RigidBody>
       ) : (
-        <BasicMap />
+        <group position={[0, -10, 0]}>
+          <BasicMap />
+        </group>
       )}
     </>
   );
@@ -36,32 +38,134 @@ export const Map = ({ mode = "glb" }: { mode?: "basic" | "glb" }) => {
 const BasicMap = () => {
   return (
     <>
-      <RigidBody
-        type="fixed"
-        position={[-5, 0, 0]}
-        userData={{ name: "middlebox" }}
-      >
-        <mesh castShadow receiveShadow>
-          <boxGeometry args={[5, 5, 5]} />
-          <meshStandardMaterial color="white" />
-        </mesh>
-      </RigidBody>
+      {/* Ground */}
       <RigidBody type="fixed" userData={{ name: "ground" }}>
-        <mesh castShadow receiveShadow>
+        <mesh receiveShadow>
           <boxGeometry args={[100, 0.1, 100]} />
           <meshStandardMaterial color="gray" />
         </mesh>
       </RigidBody>
+
+      {/* Walls */}
+      {/* Back Wall */}
       <RigidBody
         type="fixed"
-        position={[0, 0.5, -10]}
-        userData={{ name: "environment" }}
+        position={[0, 5, -50]}
+        userData={{ name: "back-wall" }}
       >
-        <mesh castShadow receiveShadow>
-          <boxGeometry args={[20, 2, 0.25]} />
-          <meshStandardMaterial color="lightblue" />
+        <mesh receiveShadow>
+          <boxGeometry args={[100, 10, 1]} />
+          <meshStandardMaterial color="darkgray" />
         </mesh>
       </RigidBody>
+
+      {/* Front Wall */}
+      <RigidBody
+        type="fixed"
+        position={[0, 5, 50]}
+        userData={{ name: "front-wall" }}
+      >
+        <mesh receiveShadow>
+          <boxGeometry args={[100, 10, 1]} />
+          <meshStandardMaterial color="darkgray" />
+        </mesh>
+      </RigidBody>
+
+      {/* Left Wall */}
+      <RigidBody
+        type="fixed"
+        position={[-50, 5, 0]}
+        rotation={[0, Math.PI / 2, 0]}
+        userData={{ name: "left-wall" }}
+      >
+        <mesh receiveShadow>
+          <boxGeometry args={[100, 10, 1]} />
+          <meshStandardMaterial color="darkgray" />
+        </mesh>
+      </RigidBody>
+
+      {/* Right Wall */}
+      <RigidBody
+        type="fixed"
+        position={[50, 5, 0]}
+        rotation={[0, Math.PI / 2, 0]}
+        userData={{ name: "right-wall" }}
+      >
+        <mesh receiveShadow>
+          <boxGeometry args={[100, 10, 1]} />
+          <meshStandardMaterial color="darkgray" />
+        </mesh>
+      </RigidBody>
+
+      {/* Central Platform */}
+      <RigidBody
+        type="fixed"
+        position={[0, 1, 0]}
+        userData={{ name: "central-platform" }}
+      >
+        <mesh receiveShadow>
+          <boxGeometry args={[20, 2, 20]} />
+          <meshStandardMaterial color="white" />
+        </mesh>
+      </RigidBody>
+
+      {/* Obstacles */}
+      {[-15, 15].map((x) =>
+        [-15, 15].map((z) => (
+          <RigidBody
+            key={`obstacle-${x}-${z}`}
+            type="fixed"
+            position={[x, 2.5, z]}
+            userData={{ name: `obstacle-${x}-${z}` }}
+          >
+            <mesh receiveShadow>
+              <boxGeometry args={[5, 5, 5]} />
+              <meshStandardMaterial color="blue" />
+            </mesh>
+          </RigidBody>
+        ))
+      )}
+
+      {/* Elevated Platforms */}
+      {[
+        [-30, -30],
+        [30, -30],
+        [-30, 30],
+        [30, 30],
+      ].map(([x, z], index) => (
+        <RigidBody
+          key={`elevated-platform-${index}`}
+          type="fixed"
+          position={[x, 5, z]}
+          userData={{ name: `elevated-platform-${index}` }}
+        >
+          <mesh receiveShadow>
+            <boxGeometry args={[10, 1, 10]} />
+            <meshStandardMaterial color="lightgray" />
+          </mesh>
+        </RigidBody>
+      ))}
+
+      {/* Ramps to Elevated Platforms */}
+      {[
+        [-30, -20],
+        [30, -20],
+        [-30, 20],
+        [30, 20],
+      ].map(([x, z], index) => (
+        <RigidBody
+          key={`ramp-${index}`}
+          type="fixed"
+          position={[x, 2.5, z]}
+          rotation={[-Math.PI / 6, 0, 0]}
+          userData={{ name: `ramp-${index}` }}
+        >
+          <mesh receiveShadow>
+            <boxGeometry args={[10, 1, 10]} />
+            <meshStandardMaterial color="lightgray" />
+          </mesh>
+        </RigidBody>
+      ))}
     </>
   );
 };
