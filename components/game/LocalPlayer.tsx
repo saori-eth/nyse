@@ -52,7 +52,12 @@ export const LocalPlayer = (props: LocalPlayerProps) => {
             {name}
           </Text>
         </Billboard>
-        <mesh ref={meshRef} userData={{ name: "localPlayer" }}>
+        <mesh
+          ref={meshRef}
+          userData={{ name: "localPlayer" }}
+          castShadow
+          receiveShadow
+        >
           <boxGeometry args={[0.5, 0.5, 0.5]} />
           <meshStandardMaterial color={color} />
         </mesh>

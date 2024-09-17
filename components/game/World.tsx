@@ -15,10 +15,15 @@ export const World = (props: WorldProps) => {
   const [color] = useLocalStorage("color", "");
 
   return (
-    <Physics debug>
+    <Physics>
       <Perf />
       <ambientLight intensity={1} />
-      <Map />
+      <directionalLight
+        position={[10, 10, 5]}
+        intensity={1}
+        shadow-mapSize={1024}
+      />
+      <Map mode="basic" />
       <Players user={{ name: name || "Anon", color: color || "red" }} />
       <Camera />
       <Bullets />
