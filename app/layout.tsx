@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Chakra_Petch } from "next/font/google";
 import "./globals.css";
+import AppWalletProvider from "@/components/web3/AppWalletProvider";
 
 const inter = Chakra_Petch({
   weight: "400",
@@ -22,7 +23,9 @@ export default function RootLayout({
       <body
         className={`${inter.className} relative w-screen h-screen overflow-hidden`}
       >
+        <AppWalletProvider>
         {children}
+        </AppWalletProvider>
       </body>
     </html>
   );

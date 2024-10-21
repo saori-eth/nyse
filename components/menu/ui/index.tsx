@@ -2,6 +2,9 @@
 import { ColorPicker } from "./ColorSelector";
 import { NameInput } from "./NameInput";
 import { PlayButton } from "./PlayButton";
+import dynamic from "next/dynamic";
+
+const WalletConnect = dynamic(() => import("./WalletConnect"), { ssr: false });
 
 export const UI = () => {
   return (
@@ -11,6 +14,9 @@ export const UI = () => {
         <ColorPicker />
         <NameInput />
         <PlayButton />
+        <div className="border hover:border-slate-900 rounded">
+          <WalletConnect />
+        </div>
       </div>
     </>
   );
