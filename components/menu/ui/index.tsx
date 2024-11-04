@@ -1,4 +1,5 @@
 "use client";
+import { WalletBalance } from "@/components/web3/WalletBalance";
 import { ColorPicker } from "./ColorSelector";
 import { NameInput } from "./NameInput";
 import { PlayButton } from "./PlayButton";
@@ -9,6 +10,7 @@ const WalletConnect = dynamic(() => import("./WalletConnect"), { ssr: false });
 export const UI = () => {
   return (
     <>
+      <WalletBalance/>
       <Title />
       <div className="absolute inset-0 top-1/4 bottom-0 flex flex-col justify-center items-center z-10 space-y-4">
         <ColorPicker />
