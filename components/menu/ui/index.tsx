@@ -5,7 +5,6 @@ import { PlayButton } from "./PlayButton";
 import dynamic from "next/dynamic";
 import { useWalletBalance } from "@/hooks/useWalletBalance";
 import { useEffect } from "react";
-import { getQuote, SOL_ADDRESS } from "@/hooks/useSwap";
 import { useConnection } from "@solana/wallet-adapter-react";
 const WalletConnect = dynamic(() => import("./WalletConnect"), { ssr: false });
 
@@ -13,18 +12,6 @@ export const UI = () => {
   const balance = useWalletBalance();
   const { connection } = useConnection();
 
-  // useEffect(() => {
-  //   const quote = async () => {
-  //     const quote = await getQuote(
-  //       connection,
-  //       "HeLp6NuQkmYB4pYWo2zYs22mESHXPQYzXbB8n4V98jwC",
-  //       SOL_ADDRESS,
-  //       10_000_000
-  //     );
-  //     console.log(quote);
-  //   };
-  //   quote();
-  // }, []);
   return (
     <>
       <Title />
