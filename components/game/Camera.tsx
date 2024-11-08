@@ -9,9 +9,10 @@ const v1 = new Vector3();
 const v2 = new Vector3();
 const bbox = new Box3();
 const sphere = new Sphere();
+const lookAtOffset = new Vector3(-0.5, 0, 0); // Offset to look right of player
 const CAMERA_DISTANCE = 10;
-const MIN_DISTANCE = 1; // Minimum camera distance
-const MAX_DISTANCE = 20; // Maximum camera distance
+const MIN_DISTANCE = 1;
+const MAX_DISTANCE = 20;
 
 export const Camera = () => {
   const { selectors } = useStore();
@@ -72,8 +73,17 @@ export const Camera = () => {
         : -distance;
     headCam.position.lerp(v1.set(0, -0.5, newDistance), delta * 25);
     camera.position.lerp(v1.setFromMatrixPosition(headCam.matrixWorld), 0.5);
-    v1.setFromMatrixPosition(head.matrixWorld).y -= 0.5;
-    camera.lookAt(v1);
+
+    // Calculate look target with offset
+    const lookTarget = v1.setFromMatrixPosition(head.matrixWorld);
+    lookTarget.y -= 0.5;
+
+    // Apply the offset relative to the player's orientation
+    const offsetVector = lookAtOffset.clone();
+    offsetVector.applyQuaternion(head.quaternion);
+    lookTarget.add(offsetVector);
+
+    camera.lookAt(lookTarget);
 
     setDeltaY(0);
   });

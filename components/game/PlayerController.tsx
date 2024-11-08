@@ -149,7 +149,7 @@ export const PlayerController = (props: PlayerControllerProps) => {
           <group ref={innerRef}>{props.children}</group>
         </group>
       </RigidBody>
-      <Gun />
+      {/* <Gun /> */}
     </>
   );
 };
